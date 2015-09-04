@@ -1,4 +1,4 @@
-angular.module('ngNamedRoute').provider('namedRouteService', function() {
+angular.module('ngNamedRoute').provider('namedRouteService', function () {
     'use strict';
 
     //map name to route
@@ -14,7 +14,7 @@ angular.module('ngNamedRoute').provider('namedRouteService', function() {
             throw new Error("Route name [" + name + "] not known.");
         }
 
-        return options.urlPrefix+routemap[name].path.replace(/(:\w+[\*\?]{0,1})/g, function (match, p) {
+        return options.urlPrefix + routemap[name].path.replace(/(:\w+[\*\?]{0,1})/g, function (match, p) {
             idx++;
 
             p = p.substring(1);
@@ -46,7 +46,7 @@ angular.module('ngNamedRoute').provider('namedRouteService', function() {
         });
     }
 
-    this.setUrlPrefix = function(prefix) {
+    this.setUrlPrefix = function (prefix) {
         options.urlPrefix = prefix;
     };
 
@@ -69,6 +69,6 @@ angular.module('ngNamedRoute').provider('namedRouteService', function() {
             open: function (name, args) {
                 $location.path(reverse(name, args));
             }
-        }
+        };
     }];
 });
