@@ -1,1 +1,1 @@
-angular.module('ngNamedRoute', []);
+angular.module('ngNamedRoute', ['ngRoute']);

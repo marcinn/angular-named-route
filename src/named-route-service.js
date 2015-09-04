@@ -1,21 +1,11 @@
-angular.module('ngNamedRoute').factory('namedRouteService', function ($route, $location) {
+angular.module('ngNamedRoute').provider('namedRouteService', function() {
     'use strict';
 
     //map name to route
-    var routemap = {};
-
-    Object.keys($route.routes).forEach(function (path) {
-        var route = $route.routes[path];
-        if (route.name) {
-            if (routemap.hasOwnProperty(route.name)) {
-                throw new Error("Route name [" + route.name + "] defined more than once.");
-            }
-            routemap[route.name] = {
-                path: path,
-                route: route
-            };
-        }
-    });
+    var routemap = {},
+        options = {
+            urlPrefix: ''
+        };
 
     function reverse(name, args) {
         var idx = -1;
@@ -24,7 +14,7 @@ angular.module('ngNamedRoute').factory('namedRouteService', function ($route, $l
             throw new Error("Route name [" + name + "] not known.");
         }
 
-        return routemap[name].path.replace(/(:\w+[\*\?]{0,1})/g, function (match, p) {
+        return options.urlPrefix+routemap[name].path.replace(/(:\w+[\*\?]{0,1})/g, function (match, p) {
             idx++;
 
             p = p.substring(1);
@@ -56,10 +46,29 @@ angular.module('ngNamedRoute').factory('namedRouteService', function ($route, $l
         });
     }
 
-    return {
-        reverse: reverse,
-        open: function (name, args) {
-            $location.path(reverse(name, args));
-        }
+    this.setUrlPrefix = function(prefix) {
+        options.urlPrefix = prefix;
     };
+
+    this.$get = ['$route', '$location', function namedRouteServiceFactory($route, $location) {
+        Object.keys($route.routes).forEach(function (path) {
+            var route = $route.routes[path];
+            if (route.name) {
+                if (routemap.hasOwnProperty(route.name)) {
+                    throw new Error("Route name [" + route.name + "] defined more than once.");
+                }
+                routemap[route.name] = {
+                    path: path,
+                    route: route
+                };
+            }
+        });
+
+        return {
+            reverse: reverse,
+            open: function (name, args) {
+                $location.path(reverse(name, args));
+            }
+        }
+    }];
 });
